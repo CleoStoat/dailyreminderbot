@@ -1,19 +1,15 @@
-from decimal import Decimal
-from datetime import datetime
+from datetime import date
 from dataclasses import dataclass
 
 
 @dataclass()
-class UserInfo:
-    user_id: int
-    first_name: str
-    last_name: str
-    username: str
-    money: float
-    last_updated: datetime
-    active: bool
+class Cron:
+    chat_id: int
+    message_id: int
+    hour: int
+    minute: int
+    last_sent_on_date: date
 
-@dataclass()
-class UserCode:
+@dataclass
+class StaffMember:
     user_id: int
-    code: str

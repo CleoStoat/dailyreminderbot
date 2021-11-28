@@ -4,41 +4,37 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    DateTime,
+    Date,
     Boolean,
     Float,
 )
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import mapper
-from sqlalchemy.sql.functions import user
 
-from db.model import UserInfo, UserCode
+from db.model import Cron, StaffMember
 import config
 
 metadata = MetaData()
 
-user_info = Table(
-    "user_infos",
+cron = Table(
+    "crons",
     metadata,
-    Column("user_id", Integer, primary_key=True, autoincrement=False),
-    Column("first_name", String),
-    Column("last_name", String),
-    Column("username", String),
-    Column("money", Float),
-    Column("last_updated", DateTime),
-    Column("active", Boolean),
+    Column("chat_id", Integer, primary_key=True, autoincrement=False),
+    Column("message_id", Integer, primary_key=True, autoincrement=False),
+    Column("hour", Integer),
+    Column("minute", Integer),
+    Column("last_sent_on_date", Date),
 )
 
-user_code = Table(
-    "user_codes",
+staff_member = Table(
+    "staff_members",
     metadata,
     Column("user_id", Integer, primary_key=True, autoincrement=False),
-    Column("code", String, primary_key=True, autoincrement=False),
 )
 
 def start_mappers():
-    mapper(UserInfo, user_info)
-    mapper(UserCode, user_code)
+    mapper(StaffMember, staff_member)
+    mapper(Cron, cron)
 
 
 def create_tables():

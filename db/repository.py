@@ -1,8 +1,8 @@
-import datetime
+from datetime import date
 import decimal
 from typing import Optional
 
-from db.model import UserInfo, UserCode
+from db.model import Cron, StaffMember
 from sqlalchemy.orm import Session
 
 class SqlAlchemyRepository:
@@ -10,6 +10,90 @@ class SqlAlchemyRepository:
 
     def __init__(self, session: Session):
         self.session = session
+
+    def add_cron(self,
+        chat_id: int,
+        message_id: int,
+        hour: int,
+        minute: int,
+        last_sent_on_date: date,
+    ) -> None:
+        ...
+
+    def add_cron_hour(self, 
+        chat_id: int,
+        message_id: int,
+        hour: int,
+        minute:int,
+    ) -> None:
+        ...
+
+    def del_cron(self, 
+        chat_id: int,
+        message_id: int,
+    ) -> None:
+        ...
+
+    def del_cron_hour(self, 
+        chat_id: int,
+        message_id: int,
+        hour: int,
+        minute:int,
+    ) -> None:
+        ...
+        
+    def find_cron(self, 
+        chat_id: int,
+        message_id: int,
+    ) -> Optional[Cron]:
+        ...
+
+    def list_cron(self, chat_id: int) -> list[Cron]:
+        ...
+        
+    def list_cron_by_time(self, 
+        chat_id: int, 
+        hour: int, 
+        minute: int
+    ) -> list[Cron]:
+        ...
+
+    def list_cron_by_time_recent_unsent(self, 
+        chat_id: int, 
+        hour: int, 
+        minute: int,
+        recent_x_minutes: int,
+        this_date: date
+    ) -> list[Cron]:
+        ...
+
+    def update_cron_last_sent(self, 
+        chat_id: int, 
+        message_id: int, 
+        last_sent_on_date: date
+    ) -> None:
+        ...
+    
+    def replace_cron_message(self, 
+        chat_id: int, 
+        message_id: int, 
+        new_message_id: int, 
+    ) -> None:
+        ...
+
+    def add_staff(self, user_id: int) -> None:
+        ...
+
+    def del_staff(self, user_id: int) -> None:
+        ...
+        
+    def find_staff(self, user_id: int) -> Optional[StaffMember]:
+        ...
+
+    def list_staff(self) -> list[StaffMember]:
+        ...
+
+
 
     def add_user_info(self, user_info: UserInfo) -> None:
         self.session.add(user_info)
