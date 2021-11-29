@@ -1,8 +1,8 @@
 from datetime import date
 import decimal
-from typing import Optional
+from typing import List, Optional
 
-from db.model import Cron, StaffMember
+from db.model import CronMessage, CronWeekday, CronHour, StaffMember
 from sqlalchemy.orm import Session
 
 class SqlAlchemyRepository:
@@ -14,134 +14,66 @@ class SqlAlchemyRepository:
     def add_cron(self,
         chat_id: int,
         message_id: int,
+    ) -> int:
+        cron = CronMessage(None, chat_id, message_id)
+        self.session.add(cron)
+        self.session.flush()
+        return cron.cron_id
+
+    def list_cron_msgs(self,
+        chat_id: int,
+    ) -> list[CronMessage]:
+        cron_msgs = self.session.query(CronMessage).filter_by(chat_id=chat_id).all()
+        self.session.flush()
+        return cron_msgs
+
+    def find_cron_msg_by_chat_id(self,
+        chat_id: int,
+        cron_id: int,
+    ) -> Optional[CronMessage]:
+        cron_msg = self.session.query(CronMessage).filter_by(chat_id=chat_id, cron_id=cron_id).first()
+        return cron_msg
+
+    def find_cron_msg(self,
+        cron_id: int,
+    ) -> Optional[CronMessage]:
+        cron_msg = self.session.query(CronMessage).filter_by(cron_id=cron_id).first()
+        return cron_msg
+
+    def add_cron_hour(self,
+        cron_id: int,
         hour: int,
         minute: int,
-        last_sent_on_date: date,
     ) -> None:
-        ...
+        cron_hour = CronHour(cron_id, hour, minute, date.min)
+        self.session.add(cron_hour)
+        return
 
-    def add_cron_hour(self, 
-        chat_id: int,
-        message_id: int,
+    def find_cron_hour(self,
+        cron_id: int,
         hour: int,
-        minute:int,
-    ) -> None:
-        ...
-
-    def del_cron(self, 
-        chat_id: int,
-        message_id: int,
-    ) -> None:
-        ...
-
-    def del_cron_hour(self, 
-        chat_id: int,
-        message_id: int,
-        hour: int,
-        minute:int,
-    ) -> None:
-        ...
-        
-    def find_cron(self, 
-        chat_id: int,
-        message_id: int,
-    ) -> Optional[Cron]:
-        ...
-
-    def list_cron(self, chat_id: int) -> list[Cron]:
-        ...
-        
-    def list_cron_by_time(self, 
-        chat_id: int, 
-        hour: int, 
-        minute: int
-    ) -> list[Cron]:
-        ...
-
-    def list_cron_by_time_recent_unsent(self, 
-        chat_id: int, 
-        hour: int, 
         minute: int,
-        recent_x_minutes: int,
-        this_date: date
-    ) -> list[Cron]:
-        ...
+    ) -> Optional[CronHour]:
+        cron_hour = self.session.query(CronHour).filter_by(cron_id=cron_id, hour=hour, minute=minute).first()
+        return cron_hour
 
-    def update_cron_last_sent(self, 
-        chat_id: int, 
-        message_id: int, 
-        last_sent_on_date: date
+    def del_cron_hour(self,
+        cron_id: int,
+        hour: int,
+        minute: int,
     ) -> None:
-        ...
-    
-    def replace_cron_message(self, 
-        chat_id: int, 
-        message_id: int, 
-        new_message_id: int, 
-    ) -> None:
-        ...
+        cron_hour = self.session.query(CronHour).filter_by(cron_id=cron_id, hour=hour, minute=minute).first()
+        self.session.delete(cron_hour)
 
-    def add_staff(self, user_id: int) -> None:
-        ...
+    def list_cron_hours(self,
+        cron_id: int,
+    ) -> list[CronHour]:
+        cron_hours = self.session.query(CronHour).filter_by(cron_id=cron_id).all()
+        return cron_hours
 
-    def del_staff(self, user_id: int) -> None:
-        ...
-        
-    def find_staff(self, user_id: int) -> Optional[StaffMember]:
-        ...
-
-    def list_staff(self) -> list[StaffMember]:
-        ...
-
-
-
-    def add_user_info(self, user_info: UserInfo) -> None:
-        self.session.add(user_info)
-        return
-    
-    def find_user_info(self, user_id: int) -> Optional[UserInfo]:
-        user_info = self.session.query(UserInfo).get({"user_id":user_id})
-        return user_info
-    
-    def add_user_code(self, user_code: UserCode) -> None:
-        self.session.add(user_code)
-        return
-
-    def list_user_codes(self, user_id: int) -> list[int]:
-        user_codes = self.session.query(UserCode).filter_by(user_id=user_id).all()
-        return [user_code.code for user_code in user_codes]
-
-    def delete_user_code(self, user_id: int, code: str) -> None:
-        user_code = self.session.query(UserCode).get({"user_id":user_id, "code":code})
-        if user_code is None:
-            return
-        self.session.delete(user_code)
-        return
-    
-    def set_user_active(self, user_id: int, active: bool) -> None:
-        user_info: Optional[UserInfo] = self.session.query(UserInfo).get({"user_id": user_id})
-        if user_info is None:
-            return
-        user_info.active = active
-        self.session.add(user_info)
-        return
-    
-    def increase_users_money(self, user_ids: list[int], ammount: decimal.Decimal) -> None:
-        self.session.query(UserInfo).filter(UserInfo.user_id.in_(user_ids)).update({UserInfo.money: UserInfo.money + ammount})
-        return
-
-    def update_user_info_last_updated(self, user_id: int, last_updated: datetime.datetime) -> None:
-        user_info: Optional[UserInfo] = self.session.query(UserInfo).get({"user_id": user_id})
-        if user_info is None:
-            return
-        user_info.last_updated = last_updated
-        self.session.add(user_info)
-        return
-
-    def find_user_code(self, code: str) -> Optional[UserCode]:
-        user_code = self.session.query(UserCode).filter_by(code=code).first()
-        return user_code
-
-    def list_user_infos(self) -> list[UserInfo]:
-        user_infos = self.session.query(UserInfo).all()
-        return user_infos
+    def list_cron_hours_by_time(self,
+        hour: int,
+        minute: int,
+    ) -> list[CronHour]:
+        cron_hours = self.session.query(CronHour).filter_by(hour=hour, minute=minute).all()
+        return cron_hours

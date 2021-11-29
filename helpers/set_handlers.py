@@ -12,10 +12,7 @@ import config
 
 
 from handlers.command_list import COMMANDS
-from handlers.handlers_list import MESSAGES
-from handlers.inline_list import INLINES
 from handlers.command_mappings import COMMAND_MAPPINGS
-from handlers.handler_mappings import MESSAGE_MAPPINGS
 from command_overrides import OVERRIDES
 
 def get_commands():
@@ -75,29 +72,7 @@ def set_bot_commands(
 
     updater.bot.setMyCommands(commands=bot_commands, scope=scope)
 
-def set_message_handlers(updater: Updater, uow: AbstractUnitOfWork):
-    dispatcher = updater.dispatcher
-
-    for msg in MESSAGES:
-        msg.callback = MESSAGE_MAPPINGS[msg.name]
-
-        handler = MessageHandler(
-            filters=msg.filters, 
-            callback=partial(msg.callback, uow=uow),
-        )
-        dispatcher.add_handler(handler, group=msg.priority)
-
-def set_inline_handlers(updater: Updater, uow: AbstractUnitOfWork):
-    dispatcher = updater.dispatcher
-
-    for inline in INLINES:
-        inline.callback = partial(inline.callback, uow=uow)
-        dispatcher.add_handler(inline)
-
-
 def set_handlers(
     updater: Updater, uow: AbstractUnitOfWork
 ) -> None:
     set_bot_commands(updater, uow)
-    set_message_handlers(updater, uow)
-    set_inline_handlers(updater, uow)

@@ -5,6 +5,8 @@ load_dotenv()
 
 credentials = {
     "TOKEN": "token",
+    "STORE_CHAT_ID": "0",
+    "OWNER_ID": "0",
 }
 
 defaults = {
@@ -32,3 +34,9 @@ def get_bot_token() -> str:
 
 def get_command_scope() -> str:
     return get_env("COMMAND_SCOPE")
+
+def get_store_chat_id() -> int:
+    return int(get_env("STORE_CHAT_ID"))
+
+def get_owner_id() -> int:
+    return int(get_env("OWNER_ID"))

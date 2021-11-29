@@ -11,19 +11,33 @@ from sqlalchemy import (
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import mapper
 
-from db.model import Cron, StaffMember
+from db.model import CronMessage, CronHour, CronWeekday, StaffMember
 import config
 
 metadata = MetaData()
 
-cron = Table(
-    "crons",
+cron_msg = Table(
+    "cron_msgs",
     metadata,
-    Column("chat_id", Integer, primary_key=True, autoincrement=False),
-    Column("message_id", Integer, primary_key=True, autoincrement=False),
-    Column("hour", Integer),
-    Column("minute", Integer),
+    Column("cron_id", Integer, primary_key=True, autoincrement=True),
+    Column("chat_id", Integer),
+    Column("message_id", Integer),
+)
+
+cron_hour = Table(
+    "cron_hours",
+    metadata,
+    Column("cron_id", Integer, primary_key=True, autoincrement=False),
+    Column("hour", Integer, primary_key=True, autoincrement=False),
+    Column("minute", Integer, primary_key=True, autoincrement=False),
     Column("last_sent_on_date", Date),
+)
+
+cron_weekday = Table(
+    "cron_weekday",
+    metadata,
+    Column("cron_id", Integer, primary_key=True, autoincrement=False),
+    Column("weekday", Integer, primary_key=True),
 )
 
 staff_member = Table(
@@ -33,8 +47,10 @@ staff_member = Table(
 )
 
 def start_mappers():
+    mapper(CronMessage, cron_msg)
+    mapper(CronHour, cron_hour)
+    mapper(CronWeekday, cron_weekday)
     mapper(StaffMember, staff_member)
-    mapper(Cron, cron)
 
 
 def create_tables():
