@@ -9,7 +9,7 @@ def cmd(
     update: Update, context: CallbackContext, uow: AbstractUnitOfWork
 ) -> None:
     with uow:
-        if len(context.args) < 2:
+        if len(context.args) < 1:
             text = "Error. Not enough args."
             update.effective_message.reply_text(text=text, quote=True)
             return
