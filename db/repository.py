@@ -77,3 +77,9 @@ class SqlAlchemyRepository:
     ) -> list[CronHour]:
         cron_hours = self.session.query(CronHour).filter_by(hour=hour, minute=minute).all()
         return cron_hours
+
+    def del_cron(self,
+        cron_id: int,
+    ) -> None:
+        cron_msg = self.session.query(CronMessage).filter_by(cron_id=cron_id).first()
+        self.session.delete(cron_msg)

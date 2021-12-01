@@ -32,4 +32,9 @@ COMMANDS = [
         name="list_cron_hours",
         description="Add hours to a cron",
     ),
+    CommandModel(
+        priority=200,
+        name="del_cron",
+        description="Delete a cron and all of its hours",
+    ),
 ]
