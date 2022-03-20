@@ -24,9 +24,10 @@ def cron_job(
             if cron_msg is None:
                 continue
 
-                
-            json_botones = json.loads(cron_msg.keybord_markup_json)
-            rpm = InlineKeyboardMarkup.de_json(json_botones, context.bot)
+            rpm = None
+            if cron_msg.keybord_markup_json:
+                json_botones = json.loads(cron_msg.keybord_markup_json)
+                rpm = InlineKeyboardMarkup.de_json(json_botones, context.bot)
 
             try:
                 context.bot.copy_message(

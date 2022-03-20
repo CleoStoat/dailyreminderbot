@@ -20,7 +20,11 @@ def cmd(
 
         # Add to database
         chat_id = update.effective_chat.id
-        cron_id = uow.repo.add_cron(chat_id, stored_msg_id, reply_to_msg.reply_markup.to_json())
+        rpm = ""
+        if reply_to_msg.reply_markup is not None:
+            rpm = reply_to_msg.reply_markup.to_json()
+
+        cron_id = uow.repo.add_cron(chat_id, stored_msg_id, rpm)
 
         text = "Added cron\n"
         text += f"cron_id: c{cron_id}\n"

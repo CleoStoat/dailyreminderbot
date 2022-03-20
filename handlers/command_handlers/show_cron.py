@@ -33,8 +33,10 @@ def cmd(
             update.effective_message.reply_text(text=text, quote=True)
             return
 
-        json_botones = json.loads(cron_msg.keybord_markup_json)
-        rpm = InlineKeyboardMarkup.de_json(json_botones, context.bot)
+        rpm = None
+        if cron_msg.keybord_markup_json:
+            json_botones = json.loads(cron_msg.keybord_markup_json)
+            rpm = InlineKeyboardMarkup.de_json(json_botones, context.bot)
 
         context.bot.copy_message(
             chat_id=chat_id,
