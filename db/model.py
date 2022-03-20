@@ -7,6 +7,7 @@ class CronMessage:
     cron_id: int
     chat_id: int
     message_id: int
+    keybord_markup_json: str
 
 @dataclass()
 class CronHour:

@@ -14,8 +14,9 @@ class SqlAlchemyRepository:
     def add_cron(self,
         chat_id: int,
         message_id: int,
+        keybord_markup_json: str
     ) -> int:
-        cron = CronMessage(None, chat_id, message_id)
+        cron = CronMessage(None, chat_id, message_id, keybord_markup_json)
         self.session.add(cron)
         self.session.flush()
         return cron.cron_id

@@ -22,6 +22,7 @@ cron_msg = Table(
     Column("cron_id", Integer, primary_key=True, autoincrement=True),
     Column("chat_id", Integer),
     Column("message_id", Integer),
+    Column("keybord_markup_json", String(length=1500))
 )
 
 cron_hour = Table(
